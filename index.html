@@ -1,122 +1,16 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>접근_</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      font-family: Arial, sans-serif;
-    }
-    
-    .login-container {
-      background: white;
-      padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-      text-align: center;
-      width: 300px;
-    }
-    
-    h1 {
-      margin-bottom: 30px;
-      color: #333;
-      font-size: 28px;
-    }
-    
-    input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 20px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      font-size: 16px;
-    }
-    
-    input:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
-    }
-    
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #667eea;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    
-    button:hover {
-      background: #764ba2;
-    }
-    
-    .error {
-      color: red;
-      font-size: 14px;
-      margin-top: 10px;
-      display: none;
-    }
-  </style>
+  <title>메인 페이지</title>
 </head>
 <body>
-  <div class="login-container">
-    <h1>🔐 비밀번호</h1>
-    <input type="password" id="pwd" placeholder="비밀번호 입력" />
-    <button onclick="login()">입장</button>
-    <div class="error" id="error">비밀번호가 틀렸습니다</div>
-  </div>
-
-  <script>
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJiOXi5DIgYpHLZxogBB8bf9xgc17CdgYNkAGpZFG6VAlWAZ9OdfNn5nSNJ3Oyuzggwg/exec';
-    
-    function login() {
-  const pwd = document.getElementById('pwd').value;
-  const errorDiv = document.getElementById('error');
+  <h1>데이터 관리 시스템</h1>
   
-  if (!pwd) {
-    errorDiv.textContent = '비밀번호를 입력하세요';
-    errorDiv.style.display = 'block';
-    return;
-  }
+  <p>데이터를 입력하고 조회하는 웹페이지입니다.</p>
   
-  fetch(APPS_SCRIPT_URL + '?action=checkPassword&password=' + encodeURIComponent(pwd))
-    .then(r => r.json())
-    .then(data => {
-      if (data.success) {
-        sessionStorage.setItem('authenticated', 'true');
-        window.location.href = 'form.html';
-      } else {
-        errorDiv.textContent = '비밀번호가 틀렸습니다';
-        errorDiv.style.display = 'block';
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      errorDiv.textContent = '오류가 발생했습니다';
-      errorDiv.style.display = 'block';
-    });
-}
-    
-    // Enter 키로 로그인
-    document.getElementById('pwd').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') login();
-    });
-  </script>
+  <ul>
+    <li><a href="inputpage.html">📝 데이터 입력</a></li>
+    <li><a href="output.html">📊 결과 보기</a></li>
+  </ul>
 </body>
 </html>

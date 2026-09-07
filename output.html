@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>결과 보기</title>
+</head>
+<body>
+  <h1>📊 저장된 데이터</h1>
+  
+  <button onclick="loadData()">새로고침</button>
+  <button onclick="goHome()">돌아가기</button>
+  
+  <hr>
+  
+  <div id="dataList"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ⚠️ 여기에 당신의 정보를 입력하세요
+    const SUPABASE_URL = 'YOUR_PROJECT_URL';
+    const SUPABASE_KEY = 'YOUR_PUBLISHABLE_KEY';
+    
+    const { createClient } = window.supabase;
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    function loadData() {
+      fetchAllData();
+    }
+
+    async function fetchAllData() {
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('에러:', error);
+        document.getElementById('dataList').innerHTML = '❌ 데이터 조회 실패: ' + error.message;
+        return;
+      }
+
+      if (data.length === 0) {
+        document.getElementById('dataList').innerHTML = '<p>저장된 데이터가 없습니다.</p>';
+        return;
+      }
+
+      let html = '';
+      data.forEach((item, index) => {
+        html += '<div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">';
+        html += '<strong>' + (index + 1) + '번째</strong><br>';
+        html += '<p>' + item.content + '</p>';
+        html += '<small>저장 시간: ' + new Date(item.created_at).toLocaleString('ko-KR') + '</small>';
+        html += '</div>';
+      });
+
+      document.getElementById('dataList').innerHTML = html;
+    }
+
+    function goHome() {
+      window.location.href = 'index.html';
+    }
+
+    // 페이지 로드 시 데이터 자동 조회
+    loadData();
+  </script>
+</body>
+</html>
