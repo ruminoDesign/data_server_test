@@ -30,42 +30,101 @@
     }
     
     h1 {
-      margin-bottom: 15px;
+      margin-bottom: 30px;
       color: #333;
       font-size: 28px;
     }
     
-    p {
-      margin-bottom: 30px;
-      color: #666;
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
       font-size: 16px;
     }
     
-    a {
-      display: inline-block;
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+    }
+    
+    button {
       width: 100%;
       padding: 12px;
       background: #667eea;
       color: white;
-      text-decoration: none;
+      border: none;
       border-radius: 5px;
       font-size: 16px;
       cursor: pointer;
       transition: background 0.3s;
-      border: none;
-      box-sizing: border-box;
     }
     
-    a:hover {
+    button:hover {
       background: #764ba2;
+    }
+    
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
     }
   </style>
 </head>
 <body>
   <div class="login-container">
-    <h1>🔐 환영합니다</h1>
-    <p>시작하려면 클릭하세요</p>
-    <a href="form.html">입장하기</a>
+    <h1>🔐 비밀번호</h1>
+    <input type="password" id="pwd" placeholder="비밀번호 입력" />
+    <button onclick="login()">입장</button>
+    <div class="error" id="error">비밀번호가 틀렸습니다</div>
   </div>
+
+  <script>
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJiOXi5DIgYpHLZxogBB8bf9xgc17CdgYNkAGpZFG6VAlWAZ9OdfNn5nSNJ3Oyuzggwg/exec';
+    
+    function login() {
+      const pwd = document.getElementById('pwd').value;
+      const errorDiv = document.getElementById('error');
+      
+      if (!pwd) {
+        errorDiv.textContent = '비밀번호를 입력하세요';
+        errorDiv.style.display = 'block';
+        return;
+      }
+      
+      const formData = new FormData();
+      formData.append('action', 'checkPassword');
+      formData.append('password', pwd);
+      
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        payload: formData
+      })
+      .then(r => r.text())
+      .then(text => {
+        const data = JSON.parse(text);
+        if (data.success) {
+          sessionStorage.setItem('authenticated', 'true');
+          window.location.href = 'form.html';
+        } else {
+          errorDiv.textContent = '비밀번호가 틀렸습니다';
+          errorDiv.style.display = 'block';
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        errorDiv.textContent = '오류가 발생했습니다';
+        errorDiv.style.display = 'block';
+      });
+    }
+    
+    // Enter 키로 로그인
+    document.getElementById('pwd').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') login();
+    });
+  </script>
 </body>
 </html>
