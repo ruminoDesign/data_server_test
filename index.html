@@ -86,40 +86,32 @@
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJiOXi5DIgYpHLZxogBB8bf9xgc17CdgYNkAGpZFG6VAlWAZ9OdfNn5nSNJ3Oyuzggwg/exec';
     
     function login() {
-      const pwd = document.getElementById('pwd').value;
-      const errorDiv = document.getElementById('error');
-      
-      if (!pwd) {
-        errorDiv.textContent = '비밀번호를 입력하세요';
+  const pwd = document.getElementById('pwd').value;
+  const errorDiv = document.getElementById('error');
+  
+  if (!pwd) {
+    errorDiv.textContent = '비밀번호를 입력하세요';
+    errorDiv.style.display = 'block';
+    return;
+  }
+  
+  fetch(APPS_SCRIPT_URL + '?action=checkPassword&password=' + encodeURIComponent(pwd))
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        sessionStorage.setItem('authenticated', 'true');
+        window.location.href = 'form.html';
+      } else {
+        errorDiv.textContent = '비밀번호가 틀렸습니다';
         errorDiv.style.display = 'block';
-        return;
       }
-      
-      const formData = new FormData();
-      formData.append('action', 'checkPassword');
-      formData.append('password', pwd);
-      
-      fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        payload: formData
-      })
-      .then(r => r.text())
-      .then(text => {
-        const data = JSON.parse(text);
-        if (data.success) {
-          sessionStorage.setItem('authenticated', 'true');
-          window.location.href = 'form.html';
-        } else {
-          errorDiv.textContent = '비밀번호가 틀렸습니다';
-          errorDiv.style.display = 'block';
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        errorDiv.textContent = '오류가 발생했습니다';
-        errorDiv.style.display = 'block';
-      });
-    }
+    })
+    .catch(err => {
+      console.error(err);
+      errorDiv.textContent = '오류가 발생했습니다';
+      errorDiv.style.display = 'block';
+    });
+}
     
     // Enter 키로 로그인
     document.getElementById('pwd').addEventListener('keypress', function(e) {
